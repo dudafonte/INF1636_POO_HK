@@ -10,7 +10,7 @@ class Parada {
 	private List<Parada> paradasAdjacentes;
 	private List<Provincia> provinciasAdjacentes;
 	private List<Cidade> cidadesAdjacentes;
-	private int qtdJogadores;
+	private final List<Jogador> jogadores = new ArrayList<>();
 	private List<Jogador> yurts;
 	
 	Parada(String id, boolean dupla, Regiao regiao) {
@@ -21,8 +21,10 @@ class Parada {
 		this.provinciasAdjacentes = new ArrayList<>();
 		this.cidadesAdjacentes = new ArrayList<>();
 		this.yurts = new ArrayList<>();
-		this.qtdJogadores = 0;
 	}
+	
+	void addJogador(Jogador j) { if (!jogadores.contains(j)) jogadores.add(j); }
+	void removeJogador(Jogador j) { jogadores.remove(j); }
 
 	String getId() {
 		return id;
@@ -49,9 +51,11 @@ class Parada {
 	}
 
 	int getQtdJogadores() {
-		return qtdJogadores;
+		return jogadores.size();
 	}
 
+	List<Jogador> getJogadores() { return List.copyOf(jogadores); }
+	
 	List<Jogador> getYurts() {
 		return yurts;
 	}
@@ -82,13 +86,15 @@ class Parada {
 	}
 	
 	boolean addYurt(Jogador jogador) {
-		// TODO
-		return false;
+		int capacidade = dupla ? 2 : 1;
+		if (yurts.size() >= capacidade) return false;
+		if (!jogador.colocarYurt()) return false;
+		yurts.add(jogador);
+		return true;
 	}
 	
 	boolean temYurtDoJogador(Jogador jogador) {
-		// TODO
-		return false;
+		return yurts.contains(jogador);
 	}
 
 }
