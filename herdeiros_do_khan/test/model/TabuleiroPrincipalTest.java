@@ -16,8 +16,7 @@ public class TabuleiroPrincipalTest {
 
 	@Test
 	public void mover_paraParadaAdjacente() {
-		Jogador jogador1 = new Jogador();
-		jogador1.setParadaAtual(tabuleiro.getParada("idA"));
+		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(), tabuleiro.getParada("idA"));
 		
 		boolean mover = tabuleiro.mover(jogador1, tabuleiro.getParada("idB"));
 		

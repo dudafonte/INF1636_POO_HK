@@ -8,21 +8,18 @@ import java.util.Map;
 import java.util.Queue;
 
 class TabuleiroPrincipal {
-	private Map<String, Parada> paradas;
-	private List<Regiao> regioes;
-	private Queue<Cidade> filaCidades;
-	private Karakorum karakorum;
+	private final Map<String, Parada> paradas = new HashMap<>();
+	private final List<Regiao> regioes =new ArrayList<>();
+	private final Queue<Cidade> filaCidades = new LinkedList<>();
+	private final Karakorum karakorum = new Karakorum("Karakorum");
 	
 	TabuleiroPrincipal() {
-		this.paradas = new HashMap<>();
-		this.regioes = new ArrayList<>();
-		this.filaCidades = new LinkedList<>();
-		this.karakorum = new Karakorum("Karakorum");
 		inicializarMapa();
 	}
 	
 	private void inicializarMapa() {
 		Regiao regiao = new Regiao(NomeRegiao.CHINA);
+		regioes.add(regiao);
 		
 		Parada paradaA = new Parada("idA", false, regiao);
 		Parada paradaB = new Parada("idB", false, regiao);
@@ -47,18 +44,16 @@ class TabuleiroPrincipal {
 	}
 
 	List<Regiao> getRegioes() {
-		return regioes;
+		return List.copyOf(regioes);
 	}
 	
 	boolean mover(Jogador jogador, Parada destino) {
 		Parada paradaAtual = jogador.getParadaAtual();
 		
-		if (paradaAtual.eAdjacenteDe(destino) && destino.addJogador()) {
-			paradaAtual.removeJogador();
+		if (paradaAtual.eAdjacenteDe(destino) && destino.podeReceberJogador()) {
 			jogador.setParadaAtual(destino);
 			return true;
 		}
-		
 		return false;
 	}
 	
