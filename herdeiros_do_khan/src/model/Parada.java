@@ -90,5 +90,9 @@ class Parada {
 		// TODO
 		return false;
 	}
+	
+	boolean eAdjacenteDe(Parada parada) {
+		return paradasAdjacentes.contains(parada);
+	}
 
 }
