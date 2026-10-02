@@ -4,27 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Parada {
-	private String id;
-	private Regiao regiao;
-	private boolean dupla;
-	private List<Parada> paradasAdjacentes;
-	private List<Provincia> provinciasAdjacentes;
-	private List<Cidade> cidadesAdjacentes;
+	private final String id;
+	private final Regiao regiao;
+	private final boolean dupla;
+	
+	private final List<Parada> paradasAdjacentes = new ArrayList<>();
+	private final List<Provincia> provinciasAdjacentes = new ArrayList<>();
+	private final List<Cidade> cidadesAdjacentes = new ArrayList<>();
 	private final List<Jogador> jogadores = new ArrayList<>();
-	private List<Jogador> yurts;
+	private final List<Jogador> yurts = new ArrayList<>();
 	
 	Parada(String id, boolean dupla, Regiao regiao) {
 		this.id = id;
 		this.dupla = dupla;
 		this.regiao = regiao;
-		this.paradasAdjacentes = new ArrayList<>();
-		this.provinciasAdjacentes = new ArrayList<>();
-		this.cidadesAdjacentes = new ArrayList<>();
-		this.yurts = new ArrayList<>();
 	}
-	
-	void addJogador(Jogador j) { if (!jogadores.contains(j)) jogadores.add(j); }
-	void removeJogador(Jogador j) { jogadores.remove(j); }
 
 	String getId() {
 		return id;
@@ -39,51 +33,51 @@ class Parada {
 	}
 
 	List<Parada> getParadasAdjacentes() {
-		return paradasAdjacentes;
+		return List.copyOf(paradasAdjacentes);
 	}
 
 	List<Provincia> getProvinciasAdjacentes() {
-		return provinciasAdjacentes;
+		return List.copyOf(provinciasAdjacentes);
 	}
 
 	List<Cidade> getCidadesAdjacentes() {
-		return cidadesAdjacentes;
+		return List.copyOf(cidadesAdjacentes);
 	}
 
 	int getQtdJogadores() {
 		return jogadores.size();
 	}
 
-	List<Jogador> getJogadores() { return List.copyOf(jogadores); }
-	
-	List<Jogador> getYurts() {
-		return yurts;
+	List<Jogador> getJogadores() { 
+		return List.copyOf(jogadores); 
 	}
 	
+	List<Jogador> getYurts() {
+		return List.copyOf(yurts);
+	}
+	
+	
 	boolean addParadaAdjacente(Parada parada) {
-		// TODO
+		if (!paradasAdjacentes.contains(parada)) {
+			return paradasAdjacentes.add(parada);
+		}
 		return false;
 	}
 	
 	boolean addProvinciaAdjacente(Provincia provincia) {
-		// TODO
-		return false;
+		if (!provinciasAdjacentes.contains(provincia)) {
+			return provinciasAdjacentes.add(provincia);
+		}
+		return false;	
 	}
 	
 	boolean addCidadeAdjacente(Cidade cidade) {
-		// TODO
+		if(!cidadesAdjacentes.contains(cidade)) {
+			return cidadesAdjacentes.add(cidade);
+		}
 		return false;
 	}
 	
-	boolean addJogador() {
-		// TODO
-		return false;
-	}
-	
-	boolean removeJogador() {
-		// TODO
-		return false;
-	}
 	
 	boolean addYurt(Jogador jogador) {
 		int capacidade = dupla ? 2 : 1;
@@ -96,5 +90,25 @@ class Parada {
 	boolean temYurtDoJogador(Jogador jogador) {
 		return yurts.contains(jogador);
 	}
+	
+	boolean eAdjacenteDe(Parada parada) {
+		return paradasAdjacentes.contains(parada);
+	}
+	
+	boolean podeReceberJogador() {
+	    int capacidade = dupla ? 2 : 1;
+	    return jogadores.size() < capacidade;
+	}
+
+	boolean addJogador(Jogador j) {
+	    if (!podeReceberJogador()) return false;
+	    if (!jogadores.contains(j)) {
+	        jogadores.add(j);
+	        return true;
+	    }
+	    return false;
+	}
+	
+	void removeJogador(Jogador j) { jogadores.remove(j); }
 
 }

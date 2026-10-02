@@ -114,6 +114,4 @@ class Jogador {
 	
 	TabuleiroJogador getTabuleiro() { return tabuleiro; }
 	
-	
-
 }

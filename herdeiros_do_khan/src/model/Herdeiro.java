@@ -1,6 +1,6 @@
 package model;
 
-public enum Herdeiro {
+enum Herdeiro {
 	ALTANI,
 	CHAGATAI,
 	JOCHI,
