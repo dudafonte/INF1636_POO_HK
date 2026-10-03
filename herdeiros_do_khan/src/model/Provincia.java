@@ -1,10 +1,14 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class Provincia {
 	private final TipoTributo tributo;
 	private int qtdTributo;
 	private final boolean provinciaKhan;
 	private final Regiao regiao;
+	private final List<Parada> paradasAdjacentes = new ArrayList<>();
 	
 	Provincia(TipoTributo tributo, boolean provinciaKhan, Regiao regiao) {
 		this.tributo = tributo;
@@ -27,6 +31,17 @@ class Provincia {
 
 	Regiao getRegiao() {
 		return regiao;
+	}
+	
+	boolean addParadaAdjacente(Parada parada) {
+	    if (!paradasAdjacentes.contains(parada)) {
+	        return paradasAdjacentes.add(parada);
+	    }
+	    return false;
+	}
+	
+	List<Parada> getParadasAdjacentes() {
+	    return List.copyOf(paradasAdjacentes);
 	}
 	
 	boolean aumentaQtdTributo() {
