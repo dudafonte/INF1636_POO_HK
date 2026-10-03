@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Cidade {
-	private NomeCidade nome;
-	private Regiao regiao;
-	private List<TipoTesouro> tesouros;
+	private final NomeCidade nome;
+	private final Regiao regiao;
+	private final List<TipoTesouro> tesouros = new ArrayList<>();
 	
 	Cidade(NomeCidade nome, Regiao regiao) {
 		this.nome = nome;
 		this.regiao = regiao;
-		this.tesouros = new ArrayList<>();
 	}
 
 	NomeCidade getNome() {
@@ -23,22 +22,21 @@ class Cidade {
 	}
 
 	List<TipoTesouro> getTesouros() {
-		return tesouros;
+		return List.copyOf(tesouros);
 	}
 	
 	boolean addTesouro(TipoTesouro tesouro) {
-		// TODO
-		return false;
+		return tesouros.add(tesouro);
 	}
 	
-	TipoTesouro removeTesouro(TipoTesouro tesouro ) {
-		// TODO
-		return tesouro;
+	void removeTesouro(TipoTesouro tesouro) {
+	    if (!tesouros.remove(tesouro)) {
+	        throw new IllegalStateException("Cidade não possui o tesouro: " + tesouro);
+	    }
 	}
 	
 	boolean temTesouro() {
-		// TODO
-		return false;
+		return !tesouros.isEmpty();
 	}
 
 }

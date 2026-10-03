@@ -1,24 +1,24 @@
 package model;
 
 class Provincia {
-	private TipoTributo tributo;
-	private int quantidade;
-	private boolean provinciaKhan;
-	private Regiao regiao;
+	private final TipoTributo tributo;
+	private int qtdTributo;
+	private final boolean provinciaKhan;
+	private final Regiao regiao;
 	
 	Provincia(TipoTributo tributo, boolean provinciaKhan, Regiao regiao) {
 		this.tributo = tributo;
 		this.provinciaKhan = provinciaKhan;
 		this.regiao = regiao;
-		this.quantidade = 1;
+		this.qtdTributo = 1;
 	}
 
 	TipoTributo getTributo() {
 		return tributo;
 	}
 
-	int getQuantidade() {
-		return quantidade;
+	int getQtdTributo() {
+		return qtdTributo;
 	}
 
 	boolean isProvinciaKhan() {
@@ -29,13 +29,19 @@ class Provincia {
 		return regiao;
 	}
 	
-	boolean aumentaQuantidade() {
-		// TODO
+	boolean aumentaQtdTributo() {
+		if (qtdTributo < 3) {
+			qtdTributo++;
+			return true;
+		}
 		return false;
 	}
 	
-	boolean diminuiQuantidade() {
-		// TODO
+	boolean diminuiQtdTributo() {
+		if (qtdTributo > 0) {
+			qtdTributo--;
+			return true;
+		}
 		return false;
 	}
 
