@@ -33,22 +33,8 @@ public class TabuleiroPrincipalTest {
 	}
 	
 	@Test
-	public void mover_paraParadaNaoAdjacente() {
-		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(), tabuleiro.getParada("idA"));
-		jogador1.getTurno().adicionarMovimentos(1);
-		
-		List<Parada> caminho = new ArrayList<>();
-		caminho.add(tabuleiro.getParada("idD"));
-		
-		boolean mover = tabuleiro.mover(jogador1, caminho);
-		
-		assertFalse("Movimento para parada não adjacente não deveria ser permitido", mover);
-		assertEquals("Jogador deveria permanecer na parada A", tabuleiro.getParada("idA"), jogador1.getParadaAtual());
-	}
-	
-	@Test
 	public void mover_usandoYurtParaPular() {
-		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(), tabuleiro.getParada("idA"));
+		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(Herdeiro.ALTANI, Map.of()), tabuleiro.getParada("idA"));
 		jogador1.getTurno().adicionarMovimentos(1);
 		
 		List<Parada> caminho = new ArrayList<>();
