@@ -25,16 +25,20 @@ class TabuleiroPrincipal {
 		Parada paradaB = new Parada("idB", false, regiao);
 		Parada paradaC = new Parada("idC", true, regiao);
 		Parada paradaD = new Parada("idD", false, regiao);
+		Parada paradaE = new Parada("idE", false, regiao);
 		
 		paradas.put("idA", paradaA);
 		paradas.put("idB", paradaB);
 		paradas.put("idC", paradaC);
 		paradas.put("idD", paradaD);
+		paradas.put("idE", paradaE);
 		
 		paradaA.addParadaAdjacente(paradaB);
 		paradaA.addParadaAdjacente(paradaC);
 		paradaB.addParadaAdjacente(paradaA);
 		paradaC.addParadaAdjacente(paradaA);	
+		paradaB.addParadaAdjacente(paradaE);
+		paradaE.addParadaAdjacente(paradaB);
 		
 	}
 	
@@ -47,15 +51,46 @@ class TabuleiroPrincipal {
 		return List.copyOf(regioes);
 	}
 	
-	boolean mover(Jogador jogador, Parada destino) {
-		Parada paradaAtual = jogador.getParadaAtual();
-		
-		if (paradaAtual.eAdjacenteDeParada(destino) && destino.podeReceberJogador()) {
-			jogador.setParadaAtual(destino);
-			jogador.getTurno().registrarVisita(destino);
-			return true;
+	boolean mover(Jogador jogador, List<Parada> caminho) {
+		if (!validarCaminho(jogador, caminho)) {
+			return false;
 		}
-		return false;
+		executarCaminho(jogador, caminho);
+		return true;
+	}
+	
+	private boolean validarCaminho(Jogador jogador, List<Parada> caminho) {
+		int movimentos = 0;
+		Parada paradaAnterior = jogador.getParadaAtual();
+		
+		for (int i = 0; i < caminho.size(); i++) {
+			if (!caminho.get(i).eAdjacenteDeParada(paradaAnterior)) { return false; }
+			if (i != caminho.size()-1) {
+				if (!caminho.get(i).temYurtDoJogador(jogador)) { movimentos++; }
+			}
+			else {
+				if (!caminho.get(i).podeReceberJogador()) { return false; }
+				movimentos++;
+			}
+			paradaAnterior = caminho.get(i);
+		}
+		return movimentos <= jogador.getTurno().getMovimentosRestantes();
+	}
+	
+	private void executarCaminho(Jogador jogador, List<Parada> caminho) {
+		for (int i = 0; i < caminho.size(); i++) {
+			if (i == caminho.size()-1) {
+				jogador.getTurno().consumirMovimento();
+				jogador.getTurno().registrarVisita(caminho.get(i));
+			}
+			else {
+				if (!caminho.get(i).temYurtDoJogador(jogador)) {
+					jogador.getTurno().registrarVisita(caminho.get(i));
+					jogador.getTurno().consumirMovimento();
+				}
+			}
+		}
+		jogador.setParadaAtual(caminho.getLast());
 	}
 	
 	boolean pegarTributo(Jogador jogador, Provincia provincia, TipoTributo tributo) {
