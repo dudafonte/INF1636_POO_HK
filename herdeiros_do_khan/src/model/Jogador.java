@@ -1,7 +1,8 @@
 package model;
 
-import java.util.EnumMap;
+import java.util.EnumMap; 
 import java.util.Map;
+import java.util.List;
 
 
 
@@ -20,6 +21,8 @@ class Jogador {
 	private int yurtsColocados;
 	private EstadoDoTurno turno = new EstadoDoTurno();
 	
+	private TipoConselheiroSecreto conselheiroSecreto;
+	
 	Jogador(Cor cor, Herdeiro herdeiro, TabuleiroJogador tabuleiro, Parada paradaInicial) {
 		this.cor = cor;
 		this.herdeiro = herdeiro;
@@ -29,6 +32,21 @@ class Jogador {
 		for (TipoTributo t: TipoTributo.values()) tributos.put(t, 0);
 		for (TipoTesouro t: TipoTesouro.values()) tesouros.put(t, 0);
 		
+	}
+	
+	// ---------- lógica do conselheiro secreto ----------
+	void escolherConselheiroSecreto(List<TipoConselheiroSecreto> cartasDistribuidas, TipoConselheiroSecreto cartaEscolhida) {
+		if (cartasDistribuidas == null || cartasDistribuidas.size() != 2) {
+			throw new IllegalArgumentException("o jogador deve receber exatamente 2 cartas de conselheiro secreto na preparação.");
+		}
+		if (!cartasDistribuidas.contains(cartaEscolhida)) {
+			throw new IllegalArgumentException("a carta escolhida deve estar entre as 2 opções recebidas.");
+		}
+		this.conselheiroSecreto = cartaEscolhida;
+	}
+	
+	TipoConselheiroSecreto getConselheiroSecreto() {
+		return conselheiroSecreto;
 	}
 	
 	// ---------- tributos ----------
@@ -100,7 +118,10 @@ class Jogador {
 		nova.addJogador(this);
 	}
 	
-	void ganharVoto() { votos++; }
+	void ganharVoto(int n) {
+		if (n < 0) throw new IllegalArgumentException("número de votos negativo");
+		votos+=n; 
+	}
 	
 	int getVotos() { return votos; }
 	

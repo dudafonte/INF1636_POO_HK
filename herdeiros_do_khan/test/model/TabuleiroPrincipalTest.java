@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Map;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class TabuleiroPrincipalTest {
 
 	@Test
 	public void mover_paraParadaAdjacente() {
-		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(), tabuleiro.getParada("idA"));
+		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(Herdeiro.ALTANI, Map.of()), tabuleiro.getParada("idA"));
 		jogador1.getTurno().adicionarMovimentos(1);
 		
 		List<Parada> caminho = new ArrayList<>();
