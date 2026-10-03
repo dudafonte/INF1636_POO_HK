@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Map;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
@@ -16,7 +17,7 @@ public class TabuleiroPrincipalTest {
 
 	@Test
 	public void mover_paraParadaAdjacente() {
-		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(), tabuleiro.getParada("idA"));
+		Jogador jogador1 = new Jogador(Cor.AZUL, Herdeiro.ALTANI, new TabuleiroJogador(Herdeiro.ALTANI, Map.of()), tabuleiro.getParada("idA"));
 		
 		boolean mover = tabuleiro.mover(jogador1, tabuleiro.getParada("idB"));
 		
