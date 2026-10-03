@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Regiao {
-	private NomeRegiao nome;
-	private List<Cidade> cidades; 
-	private List<Parada> paradas;
+	private final NomeRegiao nome;
+	private final List<Cidade> cidades = new ArrayList<>(); 
+	private final List<Parada> paradas = new ArrayList<>();
 	
 	Regiao(NomeRegiao nome) {
 		this.nome = nome;
-		this.cidades = new ArrayList<>();
-	    this.paradas = new ArrayList<>();
 	}
 
 	NomeRegiao getNome() {
@@ -19,20 +17,24 @@ class Regiao {
 	}
 
 	List<Cidade> getCidades() {
-		return cidades;
+		return List.copyOf(cidades);
 	}
 
 	List<Parada> getParadas() {
-		return paradas;
+		return List.copyOf(paradas);
 	}
 	
 	boolean addCidade(Cidade cidade) {
-		// TODO
+		if (!cidades.contains(cidade)) {
+			return cidades.add(cidade);
+		}
 		return false;
 	}
 	
 	boolean addParada(Parada parada) {
-		// TODO
+		if (!paradas.contains(parada)) {
+			return paradas.add(parada);
+		}
 		return false;
 	}
 

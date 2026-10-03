@@ -50,25 +50,54 @@ class TabuleiroPrincipal {
 	boolean mover(Jogador jogador, Parada destino) {
 		Parada paradaAtual = jogador.getParadaAtual();
 		
-		if (paradaAtual.eAdjacenteDe(destino) && destino.podeReceberJogador()) {
+		if (paradaAtual.eAdjacenteDeParada(destino) && destino.podeReceberJogador()) {
 			jogador.setParadaAtual(destino);
+			jogador.getTurno().registrarVisita(destino);
 			return true;
 		}
 		return false;
 	}
 	
 	boolean pegarTributo(Jogador jogador, Provincia provincia, TipoTributo tributo) {
-		// TODO
+		boolean paradaAdjacente = false;
+		for (Parada parada : provincia.getParadasAdjacentes()) {
+			if (jogador.getTurno().visitou(parada)) {
+				paradaAdjacente = true;
+				break;
+			}
+		}
+		
+		if (paradaAdjacente && provincia.getTributo() == tributo) {
+			if (provincia.diminuiQtdTributo()) {
+				jogador.adicionarTributo(tributo, 1);
+				return true;
+			}
+		}
 		return false;
 	}
 	
-	boolean construirYurt(Jogador jogador) {
-		// TODO
+	boolean construirYurt(Jogador jogador, Parada parada) {
+		if (jogador.getTurno().visitou(parada)) {
+			return parada.addYurt(jogador);
+		}
 		return false;
 	}
 	
 	boolean atacarCidade(Jogador jogador, Cidade cidade, TipoTesouro tesouro) {
-		// TODO
+		int custo = jogador.getTurno().custoProximoTesouro(cidade);
+		
+		if (jogador.getParadaAtual().eAdjacenteDeCidade(cidade) && cidade.getTesouros().contains(tesouro) 
+				&& jogador.podeGastar(TipoTributo.ESPADA, custo)) {
+			jogador.gastarTributo(TipoTributo.ESPADA, custo);
+			cidade.removeTesouro(tesouro);
+			jogador.adicionarTesouro(tesouro);
+			jogador.getTurno().registrarTesouroTomado(cidade);
+			
+			if (!cidade.temTesouro()) {
+				// TODOconquistacidade
+			}
+			return true;
+		}
 		return false;
 	}
 	

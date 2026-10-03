@@ -91,8 +91,16 @@ class Parada {
 		return yurts.contains(jogador);
 	}
 	
-	boolean eAdjacenteDe(Parada parada) {
+	boolean eAdjacenteDeParada(Parada parada) {
 		return paradasAdjacentes.contains(parada);
+	}
+	
+	boolean eAdjacenteDeProvincia(Provincia provincia) {
+		return provinciasAdjacentes.contains(provincia);
+	}
+	
+	boolean eAdjacenteDeCidade(Cidade cidade) {
+		return cidadesAdjacentes.contains(cidade);
 	}
 	
 	boolean podeReceberJogador() {
