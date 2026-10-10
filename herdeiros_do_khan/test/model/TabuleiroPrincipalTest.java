@@ -51,14 +51,14 @@ public class TabuleiroPrincipalTest {
 	
 	@Test(expected = IllegalStateException.class)
 	public void altaniNaoComecaEmParadaSimples() {
-	    new Jogador(Cor.AMARELO, Herdeiro.ALTANI,
+	    new Jogador(Cor.VERDE, Herdeiro.ALTANI,
 	        new TabuleiroJogador(Herdeiro.ALTANI, Map.of()), tabuleiro.getParada("idA"));
 	}
 
 	@Test
 	public void altaniComecaComDoisPeoesEmKarakorum() {
 	    Karakorum k = new Karakorum("K");
-	    Jogador j = new Jogador(Cor.AMARELO, Herdeiro.ALTANI,
+	    Jogador j = new Jogador(Cor.VERDE, Herdeiro.ALTANI,
 	        new TabuleiroJogador(Herdeiro.ALTANI, Map.of()), k);
 	    assertEquals(2, j.quantidadePeoes());
 	    assertEquals(2, k.getQtdJogadores());
