@@ -52,6 +52,7 @@ class TabuleiroPrincipal {
 	}
 	
 	boolean mover(Jogador jogador, List<Parada> caminho) {
+		if (caminho == null || caminho.isEmpty()) return false;
 		if (!validarCaminho(jogador, caminho)) {
 			return false;
 		}
@@ -123,7 +124,7 @@ class TabuleiroPrincipal {
 		
 		if (jogador.getParadaAtual().eAdjacenteDeCidade(cidade) && cidade.getTesouros().contains(tesouro) 
 				&& jogador.podeGastar(TipoTributo.ESPADA, custo)) {
-			jogador.gastarTributo(TipoTributo.ESPADA, custo);
+			jogador.gastarComVirtuais(TipoTributo.ESPADA, custo);
 			cidade.removeTesouro(tesouro);
 			jogador.adicionarTesouro(tesouro);
 			jogador.getTurno().registrarTesouroTomado(cidade);

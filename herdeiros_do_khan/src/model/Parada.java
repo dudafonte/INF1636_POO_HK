@@ -103,20 +103,19 @@ class Parada {
 		return cidadesAdjacentes.contains(cidade);
 	}
 	
-	boolean podeReceberJogador() {
-	    int capacidade = dupla ? 2 : 1;
-	    return jogadores.size() < capacidade;
-	}
+	void removeJogador(Jogador j) { jogadores.remove(j); }
+	
 
-	boolean addJogador(Jogador j) {
-	    if (!podeReceberJogador()) return false;
-	    if (!jogadores.contains(j)) {
-	        jogadores.add(j);
-	        return true;
-	    }
-	    return false;
+	boolean podeReceberJogador() {
+		int capacidade = dupla ? 2 : 1;
+		return jogadores.size() < capacidade;
+		
 	}
 	
-	void removeJogador(Jogador j) { jogadores.remove(j); }
+	boolean addJogador(Jogador j) {
+		if (!podeReceberJogador()) return false;
+		jogadores.add(j);
+		return true;
+	}
 
 }
