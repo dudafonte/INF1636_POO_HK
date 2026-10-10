@@ -13,7 +13,6 @@ class TabuleiroJogador {
 	
 	TabuleiroJogador(Herdeiro herdeiro, Map<TipoColuna, Map<TipoAcao, Integer>> acoesBasePorColuna) {
 		this.herdeiro = herdeiro;
-		this.pecasAtivacaoDisponiveis = TOTAL_PECAS_ATIVACAO;
 		this.colunas = new ArrayList<>();
 		
 		for (TipoColuna tipo : TipoColuna.values()) {
@@ -30,6 +29,15 @@ class TabuleiroJogador {
 		
 	}
 	
+	void resgatarMelhoriaGratuita(Melhoria melhoria, EstadoDoTurno turno) {
+		if (turno.getMelhoriasGratuitasPendentes() <= 0) {
+			throw new IllegalStateException("sem melhorias gratuitas pendentes.");
+		}
+		adicionarMelhoriaGratuita(melhoria);
+		turno.consumirMelhoriaGratuitaPendente();
+		
+	}
+	
 	Herdeiro getHerdeiro() {
 		return herdeiro;
 	}
@@ -39,7 +47,7 @@ class TabuleiroJogador {
 	}
 	
 	int getPecasAtivacaoDisponiveis() {
-		return pecasAtivacaoDisponiveis;
+	    return (int) colunas.stream().filter(ColunaDeAcao::isDisponivel).count();
 	}
 	
 	ColunaDeAcao getColuna(TipoColuna tipo) {
@@ -47,27 +55,26 @@ class TabuleiroJogador {
 	}
 	
 	void ativarColuna(TipoColuna tipo, EstadoDoTurno turno) {
-		ColunaDeAcao coluna = getColuna(tipo);
-		if (!coluna.isDisponivel()) {
-			throw new IllegalStateException("A coluna " + tipo + " já está com uma peça de ativação e indisponível.");
-		}
-		if (pecasAtivacaoDisponiveis <= 0) {
-			throw new IllegalStateException("o jogador não possui peças de ativação disponíveis.");
-		}
-		coluna.colocarFicha();
-		pecasAtivacaoDisponiveis--;
-		
-		if (coluna.getQuantidadeBase(TipoAcao.RECUPERAR_FICHAS) > 0 || tipo == TipoColuna.BRANCA) {
-			recuperarTodasFichas();
-		}
-		processarEfeitosColuna(coluna, turno);
+	    if (turno.isColunaAtivada()) {
+	        throw new IllegalStateException("já foi ativada uma coluna neste turno.");
+	    }
+	    ColunaDeAcao coluna = getColuna(tipo);
+	    if (!coluna.isDisponivel()) {
+	        throw new IllegalStateException("a coluna " + tipo + " já está com uma peça de ativação e indisponível.");
+	    }
+	    coluna.colocarFicha();
+	    turno.registrarColunaAtivada();
+
+	    if (coluna.getQuantidadeBase(TipoAcao.RECUPERAR_FICHAS) > 0 || tipo == TipoColuna.BRANCA) {
+	        recuperarTodasFichas();
+	    }
+	    processarEfeitosColuna(coluna, turno);
 	}
 	
 	void recuperarTodasFichas() {
 		for (ColunaDeAcao c : colunas) {
 			c.recuperarFicha();
 		}
-		this.pecasAtivacaoDisponiveis = TOTAL_PECAS_ATIVACAO;
 	}
 	
 	void adicionarMelhoriaComprada(Melhoria melhoria, TipoColuna colunaAlvoTipo, EstadoDoTurno turno) {
@@ -87,12 +94,7 @@ class TabuleiroJogador {
                      getColuna(TipoColuna.VERDE).getMelhorias().size()),
             getColuna(TipoColuna.VERMELHA).getMelhorias().size()
         );
-        ColunaDeAcao colunaBranca = getColuna(TipoColuna.BRANCA);
-        int quantidadeAtualBranca = colunaBranca.getMelhorias().size() + turno.getMelhoriasGratuitasPendentes();
-        
-        if (herdeiro == Herdeiro.JOCHI && tamanhoMinimo == 1 && quantidadeAtualBranca == 0) {
-            return; 
-        }
+        int quantidadeAtualBranca = getColuna(TipoColuna.BRANCA).getMelhorias().size() + turno.getMelhoriasGratuitasPendentes();
         
         if (quantidadeAtualBranca < tamanhoMinimo) {
             turno.adicionarMelhoriaGratuitaPendente();
@@ -121,6 +123,18 @@ class TabuleiroJogador {
 				break;
 			case TRIBUTO_EXTRA:
 				turno.adicionarAcoesTributoRestantes(1);
+				break;
+			case MOEDA_VIRTUAL:
+				turno.adicionarTributoVirtual(TipoTributo.MOEDA, 1);
+				break;
+			case ESPADA_VIRTUAL:
+				turno.adicionarTributoVirtual(TipoTributo.ESPADA, 1);
+				break;
+			case YURT_VIRTUAL:
+				turno.adicionarTributoVirtual(TipoTributo.YURT, 1);
+				break;
+			case TESOURO_VIRTUAL:
+				turno.adicionarTesouroVirtual(m.getTesouroEspecifico());
 				break;
 			default:
 				break;

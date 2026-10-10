@@ -1,6 +1,7 @@
 package model;
 
-import java.util.EnumMap; 
+import java.util.EnumMap;  
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
@@ -16,7 +17,7 @@ class Jogador {
 	private final Map<TipoTributo, Integer> tributos = new EnumMap<>(TipoTributo.class);
 	private final Map<TipoTesouro, Integer> tesouros = new EnumMap<>(TipoTesouro.class);
 	
-	private Parada paradaAtual;
+	private final List<Parada> paradas = new ArrayList<>();
 	private int votos;
 	private int yurtsColocados;
 	private EstadoDoTurno turno = new EstadoDoTurno();
@@ -25,10 +26,21 @@ class Jogador {
 	
 	Jogador(Cor cor, Herdeiro herdeiro, TabuleiroJogador tabuleiro, Parada paradaInicial) {
 		this.cor = cor;
+		if (herdeiro != tabuleiro.getHerdeiro()) {
+			throw new IllegalArgumentException("herdeiro do jogador diferente do herdeiro do tabuleiro.");
+		}
 		this.herdeiro = herdeiro;
 		this.tabuleiro = tabuleiro;
-		this.paradaAtual = paradaInicial;
-		paradaInicial.addJogador(this);
+		if (!paradaInicial.addJogador(this)) {
+			throw new IllegalStateException("para incial sem espaço para o peão.");
+		}
+		paradas.add(paradaInicial);
+		if (herdeiro == Herdeiro.ALTANI) {
+			if (!paradaInicial.addJogador(this)) {
+				throw new IllegalStateException("parada inicial sem espaço para o 2o. peão.");
+			}
+			paradas.add(paradaInicial);
+		}
 		for (TipoTributo t: TipoTributo.values()) tributos.put(t, 0);
 		for (TipoTesouro t: TipoTesouro.values()) tesouros.put(t, 0);
 		
@@ -64,7 +76,7 @@ class Jogador {
 		return tributos.get(tipo) >= qtd;
 	}
 	
-	void gastarTributo(TipoTributo tipo, int qtd) {
+	private void gastarTributo(TipoTributo tipo, int qtd) {
 		if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
 		if (!podeGastar(tipo, qtd))
 			throw new IllegalStateException("tributo insuficiente: " + tipo);
@@ -110,12 +122,29 @@ class Jogador {
 	}
 	
 	// ---------- posição, votos, turno ----------
-	Parada getParadaAtual() { return paradaAtual; }
+	int quantidadePeoes() { return paradas.size(); }
 	
-	void setParadaAtual(Parada nova) { 
-		if (paradaAtual != null) paradaAtual.removeJogador(this);
-		paradaAtual = nova;
+	int getPeaoAtivo() { return turno.getPeaoAtivo(); }
+	
+	void selecionarPeao(int indice) {
+		if (indice < 0 || indice >= paradas.size())
+			throw new IllegalArgumentException("peão inválido: " + indice);
+		turno.selecionarPeao(indice);
+	}
+	
+	Parada getParadaAtual() { return paradas.get(turno.getPeaoAtivo()); }
+	
+	Parada getParada(int indice) { return paradas.get(indice); }
+	
+	void setParadaAtual(Parada nova) {
+		if (!nova.podeReceberJogador()) {
+			throw new IllegalStateException("a parada" + nova.getId() + " está ocupada.");
+		}
+		int peao = turno.getPeaoAtivo();
+		paradas.get(peao).removeJogador(this);
+		paradas.set(peao, nova);
 		nova.addJogador(this);
+		turno.registrarVisita(peao, nova);
 	}
 	
 	void ganharVoto(int n) {
@@ -125,7 +154,16 @@ class Jogador {
 	
 	int getVotos() { return votos; }
 	
-	void iniciarTurno() { turno = new EstadoDoTurno(); }
+	void iniciarTurno() { 
+		turno = new EstadoDoTurno();
+		for (int i = 0; i < paradas.size(); i++) {
+			turno.registrarVisita(i, paradas.get(i));
+		}
+	}
+	
+	boolean podeFazerAcaoExtra() { return turno.peaoPodeFazerAcaoExtra();}
+	
+	void registrarAcaoExtra() { turno.registrarAcaoExtra(); }
 	
 	EstadoDoTurno getTurno() { return turno; }
 	
@@ -134,5 +172,35 @@ class Jogador {
 	Herdeiro getHerdeiro() { return herdeiro; }
 	
 	TabuleiroJogador getTabuleiro() { return tabuleiro; }
+	
+	// virtuais
+	
+	boolean podeGastarComVirtuais(TipoTributo tipo, int qtd) {
+		if (qtd < 0) throw new IllegalArgumentException("quantidade negativa.");
+		return tributos.get(tipo) + turno.tributosVirtuaisDe(tipo) >= qtd;
+	}
+	
+	void gastarComVirtuais(TipoTributo tipo, int qtd) {
+		if (!podeGastarComVirtuais(tipo, qtd))
+			throw new IllegalStateException("tributo insuficiente: " + tipo);
+		int doVirtual = Math.min(qtd, turno.tributosVirtuaisDe(tipo));
+		turno.consumirTributoVirtual(tipo, doVirtual);
+		gastarTributo(tipo, qtd - doVirtual);
+	}
+	
+	int quantidadeDisponivelDe(TipoTesouro tipo) {
+		return tesouros.get(tipo) + turno.tesourosVirtuaisDe(tipo);
+	}
+	
+	void entregarTesouroComVirtual(TipoTesouro tipo) {
+		if (quantidadeDisponivelDe(tipo) <= 0)
+			throw new IllegalStateException("tesouro insuficiente: " + tipo);
+		if (turno.tesourosVirtuaisDe(tipo) > 0) {
+			turno.consumirTesouroVirtual(tipo);
+		}
+		else {
+			entregarTesouro(tipo, 1);
+		}
+	}
 	
 }
