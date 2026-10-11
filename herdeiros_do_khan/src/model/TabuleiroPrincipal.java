@@ -37,6 +37,8 @@ class TabuleiroPrincipal {
 		Cidade cidadeFila = new Cidade(NomeCidade.KAESONG, regiao);
 		filaCidades.add(cidadeFila);
 		
+		Provincia provincia = new Provincia(TipoTributo.ESPADA, false, regiao);
+		
 		
 		Parada paradaA = new Parada("idA", false, regiao);
 		Parada paradaB = new Parada("idB", false, regiao);
@@ -56,7 +58,7 @@ class TabuleiroPrincipal {
 		
 		paradaA.addCidadeAdjacente(cidadeAtiva);
 		
-
+		paradaB.conectarCom(provincia);
 	}
 	
 	private static <T> void embaralhar(List<T> lista) {
@@ -79,6 +81,14 @@ class TabuleiroPrincipal {
 
 	List<Regiao> getRegioes() {
 		return List.copyOf(regioes);
+	}
+	
+	List<Cidade> getCidadesAtivas() {
+	    return List.copyOf(cidadesAtivas);
+	}
+	
+	List<Cidade> getCidadesConquistadas() {
+	    return List.copyOf(cidadesConquistadas);
 	}
 	
 	boolean mover(Jogador jogador, List<Parada> caminho) {
