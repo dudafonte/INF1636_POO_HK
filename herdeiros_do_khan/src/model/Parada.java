@@ -56,15 +56,28 @@ class Parada {
 		return List.copyOf(yurts);
 	}
 	
+	boolean conectarCom(Parada outra) {
+		if (outra == null) throw new IllegalArgumentException("parada não pode ser nula");
+		boolean adicionouAqui = addParadaAdjacente(outra);
+		boolean adicionouLa = outra.addParadaAdjacente(this);
+		return adicionouAqui && adicionouLa;
+	}
 	
-	boolean addParadaAdjacente(Parada parada) {
+	private boolean addParadaAdjacente(Parada parada) {
 		if (!paradasAdjacentes.contains(parada)) {
 			return paradasAdjacentes.add(parada);
 		}
 		return false;
 	}
 	
-	boolean addProvinciaAdjacente(Provincia provincia) {
+	boolean conectarCom(Provincia outra) {
+		if (outra == null) throw new IllegalArgumentException("provincia não pode ser nula");
+		boolean adicionouAqui = addProvinciaAdjacente(outra);
+		boolean adicionouLa = outra.addParadaAdjacente(this);
+		return adicionouAqui && adicionouLa;
+	}
+	
+	private boolean addProvinciaAdjacente(Provincia provincia) {
 		if (!provinciasAdjacentes.contains(provincia)) {
 			return provinciasAdjacentes.add(provincia);
 		}

@@ -45,7 +45,7 @@ public class TabuleiroPrincipalTest {
 		
 		boolean mover = tabuleiro.mover(jogador1, caminho);
 		
-		assertTrue("Movimento para deveria ser permitido", mover);
+		assertTrue("Movimento deveria ser permitido", mover);
 		assertEquals("Jogador deveria estar na parada E", tabuleiro.getParada("idE"), jogador1.getParadaAtual());
 	}
 	
