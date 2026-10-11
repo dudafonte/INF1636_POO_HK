@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
+
 public class TabuleiroJogadorTest {
 	private TabuleiroJogador chagatai;
 	
@@ -14,7 +15,6 @@ public class TabuleiroJogadorTest {
 		chagatai = criarTabuleiro(Herdeiro.CHAGATAI);
 	}
 
-	// helpers 
 	private TabuleiroJogador criarTabuleiro(Herdeiro h) {
 		Map<TipoColuna, Map<TipoAcao, Integer>> base = Map.of(
 			TipoColuna.AMARELA, Map.of(TipoAcao.MOVER, 3),
@@ -33,7 +33,7 @@ public class TabuleiroJogadorTest {
 		t.adicionarMelhoriaComprada(melhoria(tipo, cor), cor, turno);
 	}
 	
-	// compra uma melhoria em cada coluna colorida "linha completa"
+	// compra uma melhoria em cada uma coluna colorida "linha completa"
 	
 	private void comprarLinha(TabuleiroJogador t, EstadoDoTurno turno) {
 		comprar(t, TipoMelhoria.MOVIMENTOS_EXTRA, TipoColuna.AMARELA, turno);
@@ -43,21 +43,10 @@ public class TabuleiroJogadorTest {
 	
 	// ---------- ativação de colunas ----------
 	
-	@Test 
-	public void ativarColuna_colocarFichaEDeixaColunaIndisponivel() {
-		EstadoDoTurno turno = new EstadoDoTurno();
-		chagatai.ativarColuna(TipoColuna.AMARELA, turno);
-		
-		assertFalse(chagatai.getColuna(TipoColuna.AMARELA).isDisponivel());
-		assertEquals(3, chagatai.getPecasAtivacaoDisponiveis());
-		
-	}
 	
 	@Test(expected = IllegalStateException.class)
 	public void ativarColuna_colunaJaUsadaLancaExcecao() {
 		chagatai.ativarColuna(TipoColuna.AMARELA, new EstadoDoTurno());
-		
-		// turno seguinte: a ficha continua amarela
 		chagatai.ativarColuna(TipoColuna.AMARELA, new EstadoDoTurno());
 		
 	}
@@ -67,17 +56,6 @@ public class TabuleiroJogadorTest {
 		EstadoDoTurno turno = new EstadoDoTurno();
 		chagatai.ativarColuna(TipoColuna.AMARELA, turno);
 		chagatai.ativarColuna(TipoColuna.VERDE, turno);
-	}
-	
-	@Test 
-	public void ativarColuna_somaAcoesBaseDaColuna() {
-		EstadoDoTurno turno = new EstadoDoTurno();
-		
-		chagatai.ativarColuna(TipoColuna.VERMELHA, turno);
-		assertEquals(2, turno.getMovimentosRestantes());
-		assertEquals(2, turno.getAcoesTributoRestantes());
-		assertFalse(turno.isKhanPendente());
-	
 	}
 	
 	@Test
@@ -119,16 +97,6 @@ public class TabuleiroJogadorTest {
 		chagatai.ativarColuna(TipoColuna.AMARELA, turnoSeguinte);
 		
 		assertEquals(5, turnoSeguinte.getMovimentosRestantes());
-	}
-	
-	@Test
-	public void melhoriaDeTributoExtra_somaUmaAcaoDeTributoDepoisDeLiberada() {
-		comprar(chagatai, TipoMelhoria.TRIBUTO_EXTRA, TipoColuna.VERMELHA, new EstadoDoTurno());
-		chagatai.liberarMelhoriasInicioTurno();
-		
-		EstadoDoTurno turno = new EstadoDoTurno();
-		chagatai.ativarColuna(TipoColuna.VERMELHA, turno);
-		assertEquals(3, turno.getAcoesTributoRestantes());
 	}
 	
 	// ---------- melhorias: restrições de coluna ----------

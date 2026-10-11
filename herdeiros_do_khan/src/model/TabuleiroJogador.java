@@ -8,8 +8,6 @@ import java.util.Map;
 class TabuleiroJogador {
 	private final Herdeiro herdeiro;
 	private final List<ColunaDeAcao> colunas;
-	private int pecasAtivacaoDisponiveis;
-	private static final int TOTAL_PECAS_ATIVACAO = 4;
 	
 	TabuleiroJogador(Herdeiro herdeiro, Map<TipoColuna, Map<TipoAcao, Integer>> acoesBasePorColuna) {
 		this.herdeiro = herdeiro;
@@ -47,11 +45,22 @@ class TabuleiroJogador {
 	}
 	
 	int getPecasAtivacaoDisponiveis() {
-	    return (int) colunas.stream().filter(ColunaDeAcao::isDisponivel).count();
+	    int total = 0;
+	    for (ColunaDeAcao c : colunas) {
+	        if (c.isDisponivel()) {
+	            total++;
+	        }
+	    }
+	    return total;
 	}
 	
 	ColunaDeAcao getColuna(TipoColuna tipo) {
-		return colunas.stream().filter(c -> c.getCor() == tipo).findFirst().orElseThrow(() -> new IllegalArgumentException("coluna inválida: " + tipo));
+	    for (ColunaDeAcao c : colunas) {
+	        if (c.getCor() == tipo) {
+	            return c;
+	        }
+	    }
+	    throw new IllegalArgumentException("coluna inválida: " + tipo);
 	}
 	
 	void ativarColuna(TipoColuna tipo, EstadoDoTurno turno) {

@@ -56,15 +56,17 @@ class EstadoDoTurno {
     }
     
     void adicionarTributoVirtual(TipoTributo tipo, int qtd) {
-    	if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
-    	tributosVirtuais.merge(tipo, qtd, Integer::sum);
+        if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
+        int atual = tributosVirtuais.getOrDefault(tipo, 0);
+        tributosVirtuais.put(tipo, atual + qtd);
     }
     
     void consumirTributoVirtual(TipoTributo tipo, int qtd) {
-    	if (qtd < 0) throw new IllegalArgumentException("qunatidade negativa");
-    	if (tributosVirtuaisDe(tipo) < qtd) 
-    		throw new IllegalStateException("tipo virtual insuficiente" + tipo);
-    	tributosVirtuais.merge(tipo, -qtd, Integer::sum);
+        if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
+        if (tributosVirtuaisDe(tipo) < qtd)
+            throw new IllegalStateException("tributo virtual insuficiente: " + tipo);
+        int atual = tributosVirtuais.getOrDefault(tipo, 0);
+        tributosVirtuais.put(tipo, atual - qtd);
     }
     
     // tesouros_virtuais
@@ -74,13 +76,15 @@ class EstadoDoTurno {
     }
     
     void adicionarTesouroVirtual(TipoTesouro tipo) {
-    	tesourosVirtuais.merge(tipo, 1, Integer::sum);
+        int atual = tesourosVirtuais.getOrDefault(tipo, 0);
+        tesourosVirtuais.put(tipo, atual + 1);
     }
     
     void consumirTesouroVirtual(TipoTesouro tipo) {
-    	if (tesourosVirtuaisDe(tipo) <= 0) 
-    		throw new IllegalStateException("tesouro virtual insuficiente: " + tipo);
-    	tesourosVirtuais.merge(tipo, -1, Integer::sum);
+        if (tesourosVirtuaisDe(tipo) <= 0)
+            throw new IllegalStateException("tesouro virtual insuficiente: " + tipo);
+        int atual = tesourosVirtuais.getOrDefault(tipo, 0);
+        tesourosVirtuais.put(tipo, atual - 1);
     }
     
     // khan_pendente
@@ -108,8 +112,13 @@ class EstadoDoTurno {
     
     // visitas
     
-    void registrarVisita(int peao, Parada p) { 
-        paradasVisitadasPorPeao.computeIfAbsent(peao, k-> new HashSet<>()).add(p); 
+    void registrarVisita(int peao, Parada p) {
+        Set<Parada> visitadas = paradasVisitadasPorPeao.get(peao);
+        if (visitadas == null) {
+            visitadas = new HashSet<>();
+            paradasVisitadasPorPeao.put(peao, visitadas);
+        }
+        visitadas.add(p);
     }
     
     void registrarVisita(Parada p) {
@@ -135,7 +144,8 @@ class EstadoDoTurno {
     }
     
     void registrarTesouroTomado(Cidade c) {
-        tesourosTomadosPorCidade.merge(c, 1, Integer::sum);
+    	int atual = tesourosTomadosPorCidade.getOrDefault(c, 0);
+    	tesourosTomadosPorCidade.put(c, atual + 1);
     }
     
     void resolverKhan() {
