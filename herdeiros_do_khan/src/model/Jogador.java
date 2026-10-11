@@ -67,8 +67,9 @@ class Jogador {
 	}
 	
 	void adicionarTributo(TipoTributo tipo, int qtd) {
-		if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
-		tributos.merge(tipo, qtd, Integer::sum);
+	    if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
+	    int atual = tributos.getOrDefault(tipo, 0);
+	    tributos.put(tipo, atual + qtd);
 	}
 	
 	boolean podeGastar(TipoTributo tipo, int qtd) {
@@ -77,10 +78,11 @@ class Jogador {
 	}
 	
 	private void gastarTributo(TipoTributo tipo, int qtd) {
-		if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
-		if (!podeGastar(tipo, qtd))
-			throw new IllegalStateException("tributo insuficiente: " + tipo);
-		tributos.merge(tipo, -qtd, Integer::sum);
+	    if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
+	    if (!podeGastar(tipo, qtd))
+	        throw new IllegalStateException("tributo insuficiente: " + tipo);
+	    int atual = tributos.getOrDefault(tipo, 0);
+	    tributos.put(tipo, atual - qtd);
 	}
 	
 	// ---------- tesouros ----------
@@ -90,18 +92,26 @@ class Jogador {
 	}
 	
 	void adicionarTesouro(TipoTesouro tipo) {
-		tesouros.merge(tipo, 1, Integer::sum);
+	    int atual = tesouros.getOrDefault(tipo, 0);
+	    tesouros.put(tipo, atual + 1);
 	}
 	
 	void entregarTesouro(TipoTesouro tipo, int qtd) {
-		if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
-		if (tesouros.get(tipo) < qtd) 
-			throw new IllegalStateException("tesouro insuficiente: " + tipo);
-		tesouros.merge(tipo, -qtd, Integer::sum);
+	    if (qtd < 0) throw new IllegalArgumentException("quantidade negativa");
+	    if (tesouros.getOrDefault(tipo, 0) < qtd)
+	        throw new IllegalStateException("tesouro insuficiente: " + tipo);
+	    int atual = tesouros.getOrDefault(tipo, 0);
+	    tesouros.put(tipo, atual - qtd);
 	}
 	
 	int tiposDeTesouroDiferentes() {
-		return (int) tesouros.values().stream().filter(q -> q > 0).count();
+	    int total = 0;
+	    for (int q : tesouros.values()) {
+	        if (q > 0) {
+	            total++;
+	        }
+	    }
+	    return total;
 	}
 	
 	// ---------- yurts ----------
