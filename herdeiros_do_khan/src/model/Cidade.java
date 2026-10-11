@@ -7,6 +7,7 @@ class Cidade {
 	private final NomeCidade nome;
 	private final Regiao regiao;
 	private final List<TipoTesouro> tesouros = new ArrayList<>();
+	private Jogador yurtConquista = null; 
 	
 	Cidade(NomeCidade nome, Regiao regiao) {
 		this.nome = nome;
@@ -19,6 +20,10 @@ class Cidade {
 
 	Regiao getRegiao() {
 		return regiao;
+	}
+	
+	Jogador getYurtConquista() {
+		return yurtConquista;
 	}
 
 	List<TipoTesouro> getTesouros() {
@@ -37,6 +42,14 @@ class Cidade {
 	
 	boolean temTesouro() {
 		return !tesouros.isEmpty();
+	}
+	
+	void addYurtConquista(Jogador jogador) {
+		if (jogador == null) throw new IllegalArgumentException("jogador não pode ser nulo");
+		if (yurtConquista != null) throw new IllegalStateException("cidade já foi conquistada");
+		
+		yurtConquista = jogador;
+		
 	}
 
 }
